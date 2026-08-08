@@ -132,6 +132,46 @@ function parseSkill(raw) {
   };
 }
 
+/** 見出し行の階層（先頭の # の数）を返す */
+function headingLevel(heading) {
+  const matched = heading.match(/^(#+)\s/);
+
+  if (matched === null) {
+    throw new Error(format(messages.headingLevelUnknown, { heading }));
+  }
+
+  return matched[1].length;
+}
+
+/**
+ * 本文から見出し1件分の範囲を切り出す。
+ * 同じ階層以上の次の見出しの手前までを返す。見出しが無い場合は例外を送出する。
+ */
+function extractSection(body, heading) {
+  trace('extractSection:enter', { heading });
+
+  const lines = body.split('\n');
+  const start = lines.findIndex((line) => line.trim() === heading);
+
+  if (start === -1) {
+    throw new Error(format(messages.sectionNotFound, { heading }));
+  }
+
+  const level = headingLevel(heading);
+
+  for (let index = start + 1; index < lines.length; index += 1) {
+    const matched = lines[index].match(/^(#+)\s/);
+
+    if (matched !== null && matched[1].length <= level) {
+      trace('extractSection:exit', { heading, end: index });
+      return lines.slice(start, index).join('\n').trimEnd();
+    }
+  }
+
+  trace('extractSection:exit', { heading, end: lines.length });
+  return lines.slice(start).join('\n').trimEnd();
+}
+
 /** SKILL.md を読み込み、分解した結果を返す */
 function loadSkill(filePath = skillPath()) {
   const raw = readSkill(filePath);
@@ -149,7 +189,9 @@ module.exports = {
   FRONTMATTER_DELIMITER,
   REPO_ROOT,
   SKILL_FILENAME,
+  extractSection,
   findFrontmatterEnd,
+  headingLevel,
   loadSkill,
   parseFrontmatter,
   parseSkill,
