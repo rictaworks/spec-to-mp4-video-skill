@@ -6,5 +6,7 @@
   "frontmatterNotMapping": "YAML フロントマターがキーと値の対応表ではありません: {actual}",
   "frontmatterInvalidYaml": "YAML フロントマターを解釈できません: {reason}",
   "sectionNotFound": "節が見つかりません: {heading}",
-  "headingLevelUnknown": "見出しの階層を判定できません: {heading}"
+  "headingLevelUnknown": "見出しの階層を判定できません: {heading}",
+  "skillsDirectoryNotFound": "設置先のディレクトリが存在しません: {path}",
+  "installationPathOccupied": "設置先にすでにパスが存在します: {path}。上書きや削除は行いません。手動で退避してから再実行してください"
 }

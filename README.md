@@ -18,6 +18,39 @@
 
 agent 定義・チェックリスト・タスク・作業記録・環境情報はローカルで運用しており、リポジトリには含めていません（`.gitignore` を参照してください）。
 
+## スキルの設置
+
+このリポジトリを Single Source of Truth とし、Claude Code のスキルディレクトリへ symlink で設置します。設置先へファイルを複製しません。
+
+```bash
+mkdir -p ~/.claude/skills
+ln -s "$(pwd)" ~/.claude/skills/spec-to-mp4-video
+```
+
+設置できたことは次で確認します。
+
+```bash
+ls -l ~/.claude/skills/spec-to-mp4-video
+head -n 2 ~/.claude/skills/spec-to-mp4-video/SKILL.md
+```
+
+`spec-to-mp4-video -> <このリポジトリのパス>` と表示され、`name: spec-to-mp4-video` が読めれば設置は完了です。
+
+設置先に同名のパスがすでにある場合、`ln` は失敗します。既存のものを手動で退避してから実行してください。このリポジトリは削除を伴う操作を行いません。
+
+設置状態をテストで確認する場合は、スキルディレクトリを環境変数で渡します。
+
+```bash
+CLAUDE_SKILLS_DIR="$HOME/.claude/skills" npm test
+```
+
+動作を確認した環境は次のとおりです。
+
+| 項目 | 値 |
+|---|---|
+| 対象ツール | Claude Code 2.1.226 |
+| 確認日時 | 2026-08-08 23:52 JST |
+
 ## 開発の進め方
 
 - TDD を厳守します（`plan` → `red test` → `coding` → `green test`）
