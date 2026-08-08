@@ -4,5 +4,7 @@
   "frontmatterMissing": "YAML フロントマターが見つかりません。先頭行が {delimiter} ではありません",
   "frontmatterUnterminated": "YAML フロントマターが閉じられていません。終端の {delimiter} がありません",
   "frontmatterNotMapping": "YAML フロントマターがキーと値の対応表ではありません: {actual}",
-  "frontmatterInvalidYaml": "YAML フロントマターを解釈できません: {reason}"
+  "frontmatterInvalidYaml": "YAML フロントマターを解釈できません: {reason}",
+  "sectionNotFound": "節が見つかりません: {heading}",
+  "headingLevelUnknown": "見出しの階層を判定できません: {heading}"
 }
