@@ -1,0 +1,8 @@
+{
+  "skillFileNotFound": "SKILL.md が見つかりません: {path}",
+  "skillFileUnreadable": "SKILL.md を読み込めません: {path} ({reason})",
+  "frontmatterMissing": "YAML フロントマターが見つかりません。先頭行が {delimiter} ではありません",
+  "frontmatterUnterminated": "YAML フロントマターが閉じられていません。終端の {delimiter} がありません",
+  "frontmatterNotMapping": "YAML フロントマターがキーと値の対応表ではありません: {actual}",
+  "frontmatterInvalidYaml": "YAML フロントマターを解釈できません: {reason}"
+}
