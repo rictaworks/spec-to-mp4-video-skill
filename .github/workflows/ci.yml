@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  TZ: Asia/Tokyo
+
+jobs:
+  security:
+    name: シークレット検査
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: シークレットの混入を検査する
+        run: bash .github/scripts/check-secrets.sh
+
+  encoding:
+    name: エンコーディング検査
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: UTF-8 / BOM なし / LF を検査する
+        run: bash .github/scripts/check-encoding.sh
+
+  convention:
+    name: 表記規約検査
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 絵文字が含まれていないことを検査する
+        run: bash .github/scripts/check-no-emoji.sh
+      - name: ネイティブダイアログが使われていないことを検査する
+        run: bash .github/scripts/check-forbidden-api.sh
+
+  spec:
+    name: 仕様検査
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: requirements.md の必須節を検査する
+        run: bash .github/scripts/check-spec.sh
+
+  docs:
+    name: ドキュメント検査
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Markdown の構文を検査する
+        run: npx -y markdownlint-cli2
+      - name: mermaid ブロックの構造を検査する
+        run: bash .github/scripts/check-mermaid.sh
+      - name: README と SPEC に未実装の記載がないことを検査する
+        run: bash .github/scripts/check-unimplemented-docs.sh
+
+  branch-policy:
+    name: ブランチ運用検査
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: main への直接 push に src/ の変更がないことを検査する
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          if [ "${BEFORE_SHA}" = "0000000000000000000000000000000000000000" ]; then
+            # ブランチ作成時の push。対象コミット単体の変更を見る
+            git diff-tree --no-commit-id --name-only -r --root "${AFTER_SHA}" \
+              | bash .github/scripts/check-branch-policy.sh
+          else
+            git diff --name-only "${BEFORE_SHA}" "${AFTER_SHA}" \
+              | bash .github/scripts/check-branch-policy.sh
+          fi

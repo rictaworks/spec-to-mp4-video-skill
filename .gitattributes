@@ -1,0 +1,5 @@
+# 改行は LF に統一する（CI の check-encoding.sh が LF のみを許可する）
+* text=auto eol=lf
+
+# シェルスクリプトは常に LF
+*.sh text eol=lf

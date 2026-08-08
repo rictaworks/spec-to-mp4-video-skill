@@ -1,0 +1,39 @@
+# 環境変数（値は絶対にコミットしない。雛形は .env.example として別途置く）
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# 資格情報・鍵
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_ed25519
+config/master.key
+
+# 依存パッケージ
+node_modules/
+
+# 個人設定（Claude Code）
+.claude/settings.local.json
+CLAUDE.local.md
+
+# 中間生成物（動画生成の作業ディレクトリ）
+out/
+.remotion/
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+*.swp
+
+CLIENT/
+DEBUG/
+DELETE/
+ENV/
+TASKS/
+WORK/
+.claude/
