@@ -62,6 +62,20 @@ jobs:
       - name: README と SPEC に未実装の記載がないことを検査する
         run: bash .github/scripts/check-unimplemented-docs.sh
 
+  test:
+    name: テスト
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: 依存をインストールする
+        run: npm ci
+      - name: テストを実行する
+        run: npm test
+
   branch-policy:
     name: ブランチ運用検査
     if: github.event_name == 'push'

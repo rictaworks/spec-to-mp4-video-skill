@@ -1,0 +1,14 @@
+{
+  "name": "spec-to-mp4-video-skill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "動画仕様書から mp4 を生成する Agent Skill の検証テスト",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "js-yaml": "^4.1.0"
+  }
+}
