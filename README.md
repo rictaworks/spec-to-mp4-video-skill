@@ -10,20 +10,13 @@
 |---|---|
 | `requirements.md` | 仕様書（SSOT） |
 | `CLAUDE.md` | Claude Code 向けの開発規約 |
-| `.claude/agents/` | agent 定義（10種） |
-| `.claude/QC10.md` / `.claude/OWASP10.md` / `.claude/CC.md` | 品質・セキュリティ・コンプライアンスのチェックリスト |
-| `.claude/Manager.md` | GitHub Issue ベース並列開発の運用 |
 | `DOCS/` | 開発原則・テストメソッド・デザイン原則 |
 | `SPEC/` | 仕様書とリバースエンジニアリングの図 |
-| `TASKS/` | タスク |
-| `DEBUG/` | バグ報告 |
-| `CLIENT/` | クライアント要望 |
-| `WORK/` | 作業報告 |
-| `ENV/` | 開発環境・本番環境 |
 | `app-ui/` | デザインモック（参照専用） |
-| `DELETE/` | ゴミ箱 |
 | `.github/workflows/ci.yml` | CI |
 | `.github/scripts/` | CI が実行する検査スクリプト |
+
+agent 定義・チェックリスト・タスク・作業記録・環境情報はローカルで運用しており、リポジトリには含めていません（`.gitignore` を参照してください）。
 
 ## 開発の進め方
 
@@ -63,4 +56,4 @@ npx -y markdownlint-cli2
 
 ## 環境
 
-実測値は `ENV/DEVELOPMENT.md` を参照してください。環境変数は `.env` で管理し、値はコミットしません。
+環境変数は `.env` で管理し、値はコミットしません。
