@@ -14,7 +14,13 @@ const messages = require('./messages.json');
 const { REPO_ROOT } = require('./skill');
 
 const SKILL_NAME = 'spec-to-mp4-video';
+const SKILL_FILENAME = 'SKILL.md';
 const SKILLS_DIR_ENV_NAME = 'CLAUDE_SKILLS_DIR';
+
+/** 設置先に置かれているものの種別 */
+const KIND_NONE = 'none';
+const KIND_SYMLINK = 'symlink';
+const KIND_ENTITY = 'entity';
 const SYMLINK_PROBE_PREFIX = 'symlink-probe-';
 const PROBE_TARGET_NAME = 'target';
 const PROBE_LINK_NAME = 'link';
@@ -75,34 +81,144 @@ function linkPath(skillsDirectory) {
   return path.join(skillsDirectory, SKILL_NAME);
 }
 
-/**
- * 設置先ディレクトリへ、このリポジトリを指す symlink を作る。
- * 作成したリンクのパスを返す。
- */
-function install(skillsDirectory, repositoryRoot = REPO_ROOT) {
+/** 設置先ディレクトリが存在することを確認する */
+function assertSkillsDirectory(skillsDirectory) {
   if (!fs.existsSync(skillsDirectory)) {
     throw new Error(
       format(messages.skillsDirectoryNotFound, { path: skillsDirectory }),
     );
   }
+}
 
-  const link = linkPath(skillsDirectory);
+/**
+ * 設置先の状態を判定して返す。
+ *
+ * 配布 zip の展開と symlink 設置はどちらも同じパスを占有するため、既存が
+ * どちらであるかを種別（none / symlink / entity）と所在で報告する。
+ * 判定のみを行い、設置先を書き換えない。
+ */
+function inspect(skillsDirectory) {
+  assertSkillsDirectory(skillsDirectory);
 
-  if (fs.existsSync(link) || fs.lstatSync(link, { throwIfNoEntry: false })) {
-    throw new Error(format(messages.installationPathOccupied, { path: link }));
+  const target = linkPath(skillsDirectory);
+  const stat = fs.lstatSync(target, { throwIfNoEntry: false });
+
+  if (stat === undefined) {
+    return {
+      path: target,
+      exists: false,
+      kind: KIND_NONE,
+      target: null,
+      summary: format(messages.installationStateNone, { path: target }),
+    };
   }
 
-  fs.symlinkSync(repositoryRoot, link, 'dir');
+  const resolved = fs.realpathSync(target);
 
-  return link;
+  if (stat.isSymbolicLink()) {
+    return {
+      path: target,
+      exists: true,
+      kind: KIND_SYMLINK,
+      target: resolved,
+      summary: format(messages.installationStateSymlink, {
+        path: target,
+        target: resolved,
+      }),
+    };
+  }
+
+  return {
+    path: target,
+    exists: true,
+    kind: KIND_ENTITY,
+    target: resolved,
+    summary: format(messages.installationStateEntity, {
+      path: target,
+      target: resolved,
+    }),
+  };
+}
+
+/** 既存がある場合に、その種別と所在を含む例外を送出する */
+function refuseOccupied(state) {
+  const template =
+    state.kind === KIND_SYMLINK
+      ? messages.installationOccupiedBySymlink
+      : messages.installationOccupiedByEntity;
+
+  throw new Error(
+    format(template, { path: state.path, target: state.target }),
+  );
+}
+
+/**
+ * 設置先ディレクトリへ、このリポジトリを指す symlink を作る。
+ * 作成したリンクのパスを返す。
+ *
+ * 既存がある場合は、種別と所在を提示して停止する。無言で上書きしない。
+ * 既存の移動・改名・削除を行わない。
+ */
+function install(skillsDirectory, repositoryRoot = REPO_ROOT) {
+  const state = inspect(skillsDirectory);
+
+  if (state.exists) {
+    refuseOccupied(state);
+  }
+
+  fs.symlinkSync(repositoryRoot, state.path, 'dir');
+
+  return state.path;
+}
+
+/** 設置先の SKILL.md がリポジトリの SKILL.md と同一かを判定する */
+function skillBodyMatches(state, repositoryRoot) {
+  if (!state.exists) {
+    return false;
+  }
+
+  const installed = path.join(state.path, SKILL_FILENAME);
+
+  if (!fs.existsSync(installed)) {
+    return false;
+  }
+
+  return (
+    fs.readFileSync(installed, 'utf8') ===
+    fs.readFileSync(path.join(repositoryRoot, SKILL_FILENAME), 'utf8')
+  );
+}
+
+/**
+ * 設置の結果を確認する。
+ *
+ * 設置物の種別と参照先に加えて、読み込まれる SKILL.md がリポジトリの版と
+ * 一致するかを返す。実体が置かれている場合は symlink ではないことが分かる。
+ * 確認のみを行い、設置先を書き換えない。
+ */
+function verify(skillsDirectory, repositoryRoot = REPO_ROOT) {
+  const state = inspect(skillsDirectory);
+  const repositoryPath = fs.realpathSync(repositoryRoot);
+
+  return {
+    ...state,
+    pointsToRepository:
+      state.kind === KIND_SYMLINK && state.target === repositoryPath,
+    skillBodyMatches: skillBodyMatches(state, repositoryRoot),
+  };
 }
 
 module.exports = {
+  KIND_ENTITY,
+  KIND_NONE,
+  KIND_SYMLINK,
   SKILLS_DIR_ENV_NAME,
   SKILL_NAME,
   UNSUPPORTED_SYMLINK_ERROR_CODES,
   directorySymlinkSupport,
+  inspect,
   install,
   linkPath,
   unsupportedReason,
+  verify,
 };
