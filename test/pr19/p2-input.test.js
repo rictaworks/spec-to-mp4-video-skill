@@ -29,22 +29,12 @@ describe('必須項目', () => {
 });
 
 describe('シーン定義の項目', () => {
-  const SCENE_FIELDS = ['見出し', '種別', '主張', '想定尺'];
-  const SCENE_TYPES = [
-    'タイトル',
-    '箇条書き',
-    '端末',
-    'コード',
-    '図解',
-    'まとめ',
-  ];
+  // 種別は Issue #33 で必須項目から外し、P4 台本生成で決定する項目とした。
+  // 種別の選択肢は test/pr39/p4-scene-type.test.js で検証する。
+  const SCENE_FIELDS = ['見出し', '主張', '想定尺'];
 
   test.each(SCENE_FIELDS)('シーン定義に %s が列挙されている', (field) => {
     expect(section()).toContain(field);
-  });
-
-  test.each(SCENE_TYPES)('種別の選択肢に %s が列挙されている', (type) => {
-    expect(section()).toContain(type);
   });
 });
 
