@@ -1,12 +1,12 @@
 /**
  * Issue #10 / PR #25
  *
- * SKILL.md の P6 のうち、レンダリングと出力仕様の契約テスト。
- * requirements.md 第8.1節（主成果物）・第9節 P6・第10.5節（範囲外）に対応する。
+ * SKILL.md の P8 のうち、レンダリングと出力仕様の契約テスト。
+ * requirements.md 第8.1節（主成果物）・第9節 P8・第10.5節（範囲外）に対応する。
  */
 const skill = require('../support/skill');
 
-const PARENT_HEADING = '## P6 シーン実装とレンダリング';
+const PARENT_HEADING = '## P8 シーン実装とレンダリング';
 const HEADING = '### レンダリング';
 
 const section = () => skill.extractSection(skill.loadSkill().body, HEADING);
@@ -17,7 +17,7 @@ describe('レンダリングの節', () => {
     expect(() => section()).not.toThrow();
   });
 
-  test('P6 の内側に置かれている', () => {
+  test('P8 の内側に置かれている', () => {
     expect(parent()).toContain(HEADING);
   });
 
@@ -82,7 +82,7 @@ describe('範囲外', () => {
 });
 
 describe('完了条件', () => {
-  test('P6 の完了条件が明記されている', () => {
+  test('P8 の完了条件が明記されている', () => {
     expect(parent()).toMatch(/完了条件/);
     expect(parent()).toMatch(/出力仕様/);
   });

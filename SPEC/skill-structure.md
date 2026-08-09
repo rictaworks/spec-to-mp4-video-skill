@@ -15,9 +15,10 @@ flowchart LR
     subgraph AGENT["エージェント（Claude Code）"]
         UC1["動画仕様書を受け取る"]
         UC2["受理できるかを判定する"]
-        UC3["mp4 を生成する"]
-        UC4["不足を提示して応答を待つ"]
-        UC5["完了報告を返す"]
+        UC3["台本を起こして承認を求める"]
+        UC4["mp4 を生成する"]
+        UC5["不足を提示して応答を待つ"]
+        UC6["完了報告を返す"]
     end
 
     SKILL["SKILL.md<br/>spec-to-mp4-video"]
@@ -25,46 +26,57 @@ flowchart LR
     USER --> UC1
     UC1 --> UC2
     UC2 -->|受理する| UC3
-    UC2 -->|受理しない| UC4
-    UC3 --> UC5
-    UC4 --> USER
+    UC2 -->|受理しない| UC5
+    UC3 -->|承認を得た| UC4
+    UC3 -->|承認を待つ| USER
+    UC4 --> UC6
     UC5 --> USER
+    UC6 --> USER
     SKILL -.->|手順を与える| UC2
     SKILL -.->|手順を与える| UC3
+    SKILL -.->|手順を与える| UC4
 ```
 
 ## 状態遷移図
 
-`SKILL.md` の7段と、停止・差し戻しの遷移を示す。段の名称は `SKILL.md` の節見出しと一致する。
+`SKILL.md` の9段と、停止・差し戻しの遷移を示す。段の名称は `SKILL.md` の節見出しと一致する。
 
 ```mermaid
 stateDiagram-v2
     [*] --> P1
     state "P1 受理判定" as P1
     state "P2 読み取りと充足判定" as P2
-    state "P3 規模判定" as P3
-    state "P4 構成データ生成" as P4
-    state "P5 環境準備" as P5
-    state "P6 シーン実装とレンダリング" as P6
-    state "P7 表示検証" as P7
+    state "P3 情報収集" as P3
+    state "P4 台本生成" as P4
+    state "P5 規模判定" as P5
+    state "P6 構成データ生成" as P6
+    state "P7 環境準備" as P7
+    state "P8 シーン実装とレンダリング" as P8
+    state "P9 表示検証" as P9
     state "停止：欠落項目を列挙" as S1
     state "停止：対象範囲の指定を求める" as S2
     state "停止：フォントの導入を求める" as S3
+    state "停止：出所の確認を求める" as S4
+    state "停止：台本の承認を待つ" as S5
     state "完了報告" as DONE
 
     P1 --> P2 : C1・C2・C3 が成立
     P1 --> [*] : 適用しない
     P2 --> S1 : 必須項目が欠落
     P2 --> P3 : 充足
-    P3 --> S2 : 上限を超過
-    P3 --> P4 : 範囲内
-    P4 --> P5 : 尺が下限を満たす
-    P5 --> S3 : 日本語グリフが欠落
-    P5 --> P6 : 可用
-    P6 --> P7
-    P7 --> P6 : 差し戻し（判読性・余白・配色）
-    P7 --> P4 : 差し戻し（尺の不足）
-    P7 --> DONE : R1 から R5 を満たす
+    P3 --> S4 : 出所を特定できない
+    P3 --> P4 : 出所が揃う
+    P4 --> S5 : 承認が得られない
+    P4 --> P5 : 台本の承認を得た
+    P5 --> S2 : 上限を超過
+    P5 --> P6 : 範囲内
+    P6 --> P7 : 尺が下限を満たす
+    P7 --> S3 : 日本語グリフが欠落
+    P7 --> P8 : 可用
+    P8 --> P9
+    P9 --> P8 : 差し戻し（判読性・余白・配色）
+    P9 --> P6 : 差し戻し（尺の不足）
+    P9 --> DONE : R1 から R5 を満たす
     DONE --> [*]
 ```
 
@@ -85,6 +97,7 @@ flowchart LR
 
     subgraph WORK["実行時の作業ディレクトリ"]
         IN["動画仕様書（入力）"]
+        SCRIPT["台本（承認を得た画面文言）"]
         DATA["構成データファイル"]
         PROJ["動画生成プロジェクト"]
         FRAMES["検証用静止画"]
@@ -94,7 +107,8 @@ flowchart LR
     SK --> LINK
     TEST -.->|内容を検証する| SK
     LINK --> IN
-    IN --> DATA
+    IN --> SCRIPT
+    SCRIPT --> DATA
     DATA --> PROJ
     PROJ --> OUT
     OUT --> FRAMES

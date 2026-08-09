@@ -15,10 +15,10 @@ describe('尺の下限の節', () => {
     expect(() => section()).not.toThrow();
   });
 
-  test('P4 の内側に置かれている', () => {
-    const p4 = skill.extractSection(skill.loadSkill().body, '## P4 構成データ生成');
+  test('P6 の内側に置かれている', () => {
+    const p6 = skill.extractSection(skill.loadSkill().body, '## P6 構成データ生成');
 
-    expect(p4).toContain(HEADING);
+    expect(p6).toContain(HEADING);
   });
 });
 
@@ -65,8 +65,8 @@ describe('想定尺が欠けている場合', () => {
 });
 
 describe('総尺との接続', () => {
-  test('採用後の尺の合計が P3 の上限に収まることを確認する手順がある', () => {
-    expect(section()).toMatch(/P3/);
+  test('採用後の尺の合計が P5 の上限に収まることを確認する手順がある', () => {
+    expect(section()).toMatch(/P5/);
     expect(section()).toMatch(/総尺/);
   });
 });

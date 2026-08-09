@@ -1,16 +1,16 @@
 /**
  * Issue #5 / PR #20
  *
- * SKILL.md の P3「規模判定」の契約テスト。
- * requirements.md 第9節 P3・第9.1節・第9.2節に対応する。
+ * SKILL.md の P5「規模判定」の契約テスト。
+ * requirements.md 第9節 P5・第9.1節・第9.2節に対応する。
  */
 const skill = require('../support/skill');
 
-const HEADING = '## P3 規模判定';
+const HEADING = '## P5 規模判定';
 
 const section = () => skill.extractSection(skill.loadSkill().body, HEADING);
 
-describe('P3 の節', () => {
+describe('P5 の節', () => {
   test('節が存在する', () => {
     expect(() => section()).not.toThrow();
   });
@@ -48,7 +48,7 @@ describe('上限を超えた場合の扱い', () => {
 });
 
 describe('完了条件', () => {
-  test('P3 の完了条件が明記されている', () => {
+  test('P5 の完了条件が明記されている', () => {
     expect(section()).toMatch(/完了条件/);
     expect(section()).toMatch(/範囲内/);
   });

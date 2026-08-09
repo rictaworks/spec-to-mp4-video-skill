@@ -1,16 +1,16 @@
 /**
  * Issue #11 / PR #26
  *
- * SKILL.md の P7「表示検証」の契約テスト。
- * requirements.md 第9節 P7・第9.1節・第10.3節（可読性）・第10.4節（検証）に対応する。
+ * SKILL.md の P9「表示検証」の契約テスト。
+ * requirements.md 第9節 P9・第9.1節・第10.3節（可読性）・第10.4節（検証）に対応する。
  */
 const skill = require('../support/skill');
 
-const HEADING = '## P7 表示検証';
+const HEADING = '## P9 表示検証';
 
 const section = () => skill.extractSection(skill.loadSkill().body, HEADING);
 
-describe('P7 の節', () => {
+describe('P9 の節', () => {
   test('節が存在する', () => {
     expect(() => section()).not.toThrow();
   });
@@ -61,20 +61,20 @@ describe('可読性の要件', () => {
 });
 
 describe('差し戻し', () => {
-  test('判読性・はみ出しの不適合は P6 へ差し戻すことが書かれている', () => {
+  test('判読性・はみ出しの不適合は P8 へ差し戻すことが書かれている', () => {
     expect(section()).toMatch(/判読性|はみ出し/);
-    expect(section()).toMatch(/P6/);
+    expect(section()).toMatch(/P8/);
     expect(section()).toMatch(/差し戻/);
   });
 
-  test('尺の不足は P4 へ差し戻すことが書かれている', () => {
+  test('尺の不足は P6 へ差し戻すことが書かれている', () => {
     expect(section()).toMatch(/尺/);
-    expect(section()).toMatch(/P4/);
+    expect(section()).toMatch(/P6/);
   });
 });
 
 describe('完了条件', () => {
-  test('P7 の完了条件が明記されている', () => {
+  test('P9 の完了条件が明記されている', () => {
     expect(section()).toMatch(/完了条件/);
     expect(section()).toMatch(/全(要件|項目)/);
   });
