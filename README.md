@@ -27,16 +27,33 @@ mkdir -p ~/.claude/skills
 ln -s "$(pwd)" ~/.claude/skills/spec-to-mp4-video
 ```
 
-設置できたことは次で確認します。
+### 設置先が配布 zip と衝突する場合
+
+設置先 `~/.claude/skills/spec-to-mp4-video` は、配布 zip を展開した場合にも同じパスが使われます。先に zip を展開していると、そこには symlink ではなく **実体** の `SKILL.md` が置かれています。この状態で `ln -s` を実行しても失敗しますが、`SKILL.md` 自体は読めてしまうため、リポジトリの変更を反映しているつもりで古い版を読み続ける事故が起きます。
+
+設置の前に、既存の有無と種別を確認してください。
 
 ```bash
-ls -l ~/.claude/skills/spec-to-mp4-video
-head -n 2 ~/.claude/skills/spec-to-mp4-video/SKILL.md
+ls -ld ~/.claude/skills/spec-to-mp4-video
 ```
 
-`spec-to-mp4-video -> <このリポジトリのパス>` と表示され、`name: spec-to-mp4-video` が読めれば設置は完了です。
+- 行頭が `l` で矢印がリポジトリを指している場合: symlink 設置済みです
+- 行頭が `d` または `-` の場合: 実体が置かれています（配布 zip の展開である可能性があります）
+- `No such file or directory` の場合: 未設置です
 
-設置先に同名のパスがすでにある場合、`ln` は失敗します。既存のものを手動で退避してから実行してください。このリポジトリは削除を伴う操作を行いません。
+実体がある場合は、それを手動で別の場所へ退避してから `ln -s` を実行してください。このリポジトリは削除・移動・改名を伴う操作を行いません。
+
+### 設置後の確認
+
+設置物の種別と参照先、および読み込まれる本文の版を確認します。
+
+```bash
+ls -ld ~/.claude/skills/spec-to-mp4-video
+readlink ~/.claude/skills/spec-to-mp4-video
+diff ~/.claude/skills/spec-to-mp4-video/SKILL.md ./SKILL.md && echo "読み込まれる本文はこのリポジトリと同一です"
+```
+
+`ls -ld` の行頭が `l`、`readlink` がこのリポジトリのパスを返し、`diff` が差分を出さなければ設置は完了です。`readlink` が何も返さない場合は symlink ではなく実体が置かれています。`diff` が差分を出す場合は、読み込まれる本文がリポジトリの版と異なります。
 
 設置状態をテストで確認する場合は、スキルディレクトリを環境変数で渡します。
 
