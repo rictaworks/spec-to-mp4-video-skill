@@ -1,16 +1,16 @@
 /**
  * Issue #8 / PR #23
  *
- * SKILL.md の P5「環境準備」の契約テスト。
- * requirements.md 第8.2節・第9節 P5・第9.1節・第12節（フォントのライセンス）に対応する。
+ * SKILL.md の P7「環境準備」の契約テスト。
+ * requirements.md 第8.2節・第9節 P7・第9.1節・第12節（フォントのライセンス）に対応する。
  */
 const skill = require('../support/skill');
 
-const HEADING = '## P5 環境準備';
+const HEADING = '## P7 環境準備';
 
 const section = () => skill.extractSection(skill.loadSkill().body, HEADING);
 
-describe('P5 の節', () => {
+describe('P7 の節', () => {
   test('節が存在する', () => {
     expect(() => section()).not.toThrow();
   });
@@ -64,7 +64,7 @@ describe('フォントのライセンス', () => {
 });
 
 describe('完了条件', () => {
-  test('P5 の完了条件が明記されている', () => {
+  test('P7 の完了条件が明記されている', () => {
     expect(section()).toMatch(/完了条件/);
     expect(section()).toMatch(/起動/);
     expect(section()).toMatch(/欠落しない/);

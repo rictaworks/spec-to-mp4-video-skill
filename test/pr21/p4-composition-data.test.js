@@ -1,16 +1,16 @@
 /**
  * Issue #6 / PR #21
  *
- * SKILL.md の P4「構成データ生成」の契約テスト。
- * requirements.md 第8.2節（副次生成物）・第9節 P4・第10.1節（表現の要件）に対応する。
+ * SKILL.md の P6「構成データ生成」の契約テスト。
+ * requirements.md 第8.2節（副次生成物）・第9節 P6・第10.1節（表現の要件）に対応する。
  */
 const skill = require('../support/skill');
 
-const HEADING = '## P4 構成データ生成';
+const HEADING = '## P6 構成データ生成';
 
 const section = () => skill.extractSection(skill.loadSkill().body, HEADING);
 
-describe('P4 の節', () => {
+describe('P6 の節', () => {
   test('節が存在する', () => {
     expect(() => section()).not.toThrow();
   });
@@ -50,7 +50,7 @@ describe('原文の保持', () => {
 });
 
 describe('構成データが持つ項目', () => {
-  const FIELDS = ['識別子', '種別', '見出し', '画面表示テキスト', '尺'];
+  const FIELDS = ['識別子', '種別', '見出し', '画面表示テキスト', '区分', '尺'];
 
   test.each(FIELDS)('構成データの項目に %s が列挙されている', (field) => {
     expect(section()).toContain(field);
@@ -62,8 +62,15 @@ describe('構成データが持つ項目', () => {
 });
 
 describe('完了条件', () => {
-  test('P4 の完了条件が明記されている', () => {
+  test('P6 の完了条件が明記されている', () => {
     expect(section()).toMatch(/完了条件/);
     expect(section()).toMatch(/原文のまま/);
+  });
+});
+
+describe('台本との関係', () => {
+  test('承認された台本を構成データへ書き出すことが書かれている', () => {
+    expect(section()).toMatch(/台本/);
+    expect(section()).toMatch(/承認/);
   });
 });

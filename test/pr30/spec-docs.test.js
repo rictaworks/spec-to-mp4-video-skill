@@ -80,16 +80,16 @@ describe('図の構成', () => {
 });
 
 describe('SKILL.md との一致', () => {
-  test('SKILL.md の P 段の見出しをすべて7件抽出できる', () => {
-    expect(stageHeadings()).toHaveLength(7);
+  test('SKILL.md の P 段の見出しをすべて9件抽出できる', () => {
+    expect(stageHeadings()).toHaveLength(9);
   });
 
   test.each(stageHeadings())('図に %s が現れる', (heading) => {
     expect(readSpec()).toContain(heading);
   });
 
-  test('差し戻し先として P4 と P6 が図に現れる', () => {
-    expect(readSpec()).toMatch(/P7.*-->.*P6|P6.*<--.*P7/s);
+  test('差し戻し先として P6 と P8 が図に現れる', () => {
+    expect(readSpec()).toMatch(/P9.*-->.*P8|P8.*<--.*P9/s);
     expect(readSpec()).toContain('差し戻し');
   });
 });

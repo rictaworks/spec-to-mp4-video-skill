@@ -79,9 +79,9 @@ describe('本文', () => {
     expect(body()).not.toContain('発火');
   });
 
-  test('7段の手順で構成することを宣言している', () => {
+  test('9段の手順で構成することを宣言している', () => {
     expect(body()).toMatch(/P1/);
-    expect(body()).toMatch(/P7/);
+    expect(body()).toMatch(/P9/);
     expect(body()).toMatch(/完了条件/);
   });
 });

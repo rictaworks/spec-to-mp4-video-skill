@@ -1,12 +1,12 @@
 /**
  * Issue #9 / PR #24
  *
- * SKILL.md の P6 のうち、シーン実装の要件の契約テスト。
- * requirements.md 第9節 P6・第10.1節（表現の要件）・第10.2節（アニメーション実装の要件）に対応する。
+ * SKILL.md の P8 のうち、シーン実装の要件の契約テスト。
+ * requirements.md 第9節 P8・第10.1節（表現の要件）・第10.2節（アニメーション実装の要件）に対応する。
  */
 const skill = require('../support/skill');
 
-const PARENT_HEADING = '## P6 シーン実装とレンダリング';
+const PARENT_HEADING = '## P8 シーン実装とレンダリング';
 const HEADING = '### シーン実装';
 
 const section = () => skill.extractSection(skill.loadSkill().body, HEADING);
@@ -16,7 +16,7 @@ describe('シーン実装の節', () => {
     expect(() => section()).not.toThrow();
   });
 
-  test('P6 の内側に置かれている', () => {
+  test('P8 の内側に置かれている', () => {
     const parent = skill.extractSection(skill.loadSkill().body, PARENT_HEADING);
 
     expect(parent).toContain(HEADING);

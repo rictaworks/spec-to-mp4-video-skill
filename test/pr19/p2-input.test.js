@@ -29,7 +29,7 @@ describe('必須項目', () => {
 });
 
 describe('シーン定義の項目', () => {
-  const SCENE_FIELDS = ['見出し', '種別', '画面表示テキスト', '想定尺'];
+  const SCENE_FIELDS = ['見出し', '種別', '主張', '想定尺'];
   const SCENE_TYPES = [
     'タイトル',
     '箇条書き',
@@ -72,13 +72,24 @@ describe('不足時の扱い', () => {
     expect(section()).toMatch(/列挙/);
   });
 
-  test('文言・尺・シーン構成を創作しないことが書かれている', () => {
-    expect(section()).toMatch(/創作しない/);
+  test('事実・尺・シーン構成を創作しないことが書かれている', () => {
+    expect(section()).toMatch(/事実[^。]*創作しない/);
   });
 });
 
 describe('完了条件', () => {
   test('P2 の完了条件が明記されている', () => {
     expect(section()).toMatch(/完了条件.*必須項目/);
+  });
+});
+
+describe('画面表示テキストの扱い', () => {
+  test('シーン定義の必須項目に画面表示テキストを列挙しない', () => {
+    expect(section()).not.toMatch(/\|\s*画面表示テキスト\s*\|/);
+  });
+
+  test('画面表示テキストを台本生成で確定することが書かれている', () => {
+    expect(section()).toMatch(/画面表示テキスト/);
+    expect(section()).toMatch(/台本生成/);
   });
 });
