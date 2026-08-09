@@ -7,6 +7,10 @@
  * 設置先はテストごとに作った一時ディレクトリとする。
  * 実行者のスキルディレクトリを書き換えない。環境変数 CLAUDE_SKILLS_DIR が
  * 指定されている場合のみ、実際の設置状態もあわせて検証する。
+ *
+ * Issue #36。ディレクトリ symlink を作成できない環境（開発者モードが無効で、
+ * かつ管理者へ昇格していない Windows）では、symlink の作成を要するテストを
+ * スキップする。スキップ理由はテスト名へ出す。
  */
 const fs = require('node:fs');
 const os = require('node:os');
@@ -16,6 +20,28 @@ const installation = require('../support/installation');
 const skill = require('../support/skill');
 
 const SKILL_NAME = 'spec-to-mp4-video';
+
+const symlinkSupport = installation.directorySymlinkSupport();
+
+/** symlink の作成を要するテストを、作成できない環境ではスキップする */
+const symlinkTest = symlinkSupport.available ? test : test.skip;
+
+// スキップした事実と理由を実行結果から読み取れるようにする。
+// jest の要約は件数しか示さないため、理由を標準エラーへ書き出す。
+if (!symlinkSupport.available) {
+  process.stderr.write(
+    `[test/pr29] symlink の作成を要するテストをスキップします: ${symlinkSupport.reason}\n`,
+  );
+}
+
+/** スキップする場合に、その理由をテスト名へ添える */
+function named(name) {
+  if (symlinkSupport.available) {
+    return name;
+  }
+
+  return `${name}（スキップ: ${symlinkSupport.reason}）`;
+}
 
 /** 設置先に見立てた一時ディレクトリを作る */
 function makeSkillsDirectory() {
@@ -39,21 +65,21 @@ describe('設置先の解決', () => {
 });
 
 describe('設置', () => {
-  test('symlink として設置される（複製ではない）', () => {
+  symlinkTest(named('symlink として設置される（複製ではない）'), () => {
     const skillsDir = makeSkillsDirectory();
     const link = installation.install(skillsDir);
 
     expect(fs.lstatSync(link).isSymbolicLink()).toBe(true);
   });
 
-  test('リンク先がこのリポジトリである', () => {
+  symlinkTest(named('リンク先がこのリポジトリである'), () => {
     const skillsDir = makeSkillsDirectory();
     const link = installation.install(skillsDir);
 
     expect(fs.realpathSync(link)).toBe(fs.realpathSync(skill.REPO_ROOT));
   });
 
-  test('設置先にファイルの複製が発生していない', () => {
+  symlinkTest(named('設置先にファイルの複製が発生していない'), () => {
     const skillsDir = makeSkillsDirectory();
     installation.install(skillsDir);
 
@@ -63,7 +89,7 @@ describe('設置', () => {
     expect(entries[0].isSymbolicLink()).toBe(true);
   });
 
-  test('すでに同名のパスがある場合、上書きせず例外を送出する', () => {
+  symlinkTest(named('すでに同名のパスがある場合、上書きせず例外を送出する'), () => {
     const skillsDir = makeSkillsDirectory();
     installation.install(skillsDir);
 
@@ -72,7 +98,7 @@ describe('設置', () => {
 });
 
 describe('symlink 経由の読み込み', () => {
-  test('SKILL.md が読め、name が解決できる', () => {
+  symlinkTest(named('SKILL.md が読め、name が解決できる'), () => {
     const skillsDir = makeSkillsDirectory();
     const link = installation.install(skillsDir);
     const loaded = skill.loadSkill(path.join(link, 'SKILL.md'));
@@ -80,7 +106,7 @@ describe('symlink 経由の読み込み', () => {
     expect(loaded.frontmatter.name).toBe(SKILL_NAME);
   });
 
-  test('本文が symlink 経由でも同一である', () => {
+  symlinkTest(named('本文が symlink 経由でも同一である'), () => {
     const skillsDir = makeSkillsDirectory();
     const link = installation.install(skillsDir);
 
