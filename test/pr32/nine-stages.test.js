@@ -158,8 +158,8 @@ describe('requirements.md との整合', () => {
       requirements().indexOf('### 7.2 任意項目'),
     );
 
-    expect(scope).not.toMatch(/画面表示テキスト/);
-    expect(scope).toMatch(/主張/);
+    expect(scope).not.toMatch(/\|\s*画面表示テキスト\s*\|/);
+    expect(scope).toMatch(/\|\s*主張\s*\|/);
   });
 
   test('不足時の扱いが事実の創作を禁じている', () => {
