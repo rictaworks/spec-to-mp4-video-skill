@@ -8,5 +8,17 @@
   "sectionNotFound": "節が見つかりません: {heading}",
   "headingLevelUnknown": "見出しの階層を判定できません: {heading}",
   "skillsDirectoryNotFound": "設置先のディレクトリが存在しません: {path}",
-  "installationPathOccupied": "設置先にすでにパスが存在します: {path}。上書きや削除は行いません。手動で退避してから再実行してください"
+  "installationPathOccupied": "設置先にすでにパスが存在します: {path}。上書きや削除は行いません。手動で退避してから再実行してください",
+  "frameCanvasMissing": "フレームに画面の大きさ（canvas.width / canvas.height）がありません: {frame}",
+  "frameElementsMissing": "フレームに要素の配列（elements）がありません: {frame}",
+  "elementNameMissing": "要素に名称（name）がありません: フレーム {frame} の {index} 番目",
+  "elementRectMissing": "要素に描画矩形（rect）がありません: {element}",
+  "elementRectInvalid": "要素の描画矩形の値が数値ではありません: {element} の {key} = {value}",
+  "elementFontSizeMissing": "文言を持つ要素に算出フォントサイズ（fontSize）がありません: {element}",
+  "elementFontSizeInvalid": "要素の算出フォントサイズが正の数値ではありません: {element} の fontSize = {value}",
+  "elementPaddingInvalid": "要素の内側の余白が0以上の数値ではありません: {element} の padding = {value}",
+  "elementParentNotFound": "要素が指す親要素が同じフレームにありません: {element} の parent = {parent}",
+  "findingSafeArea": "描画矩形が安全余白の外へ {overflow}px 出ています（{edge}）",
+  "findingContainment": "親要素 {parent} の内寸を {overflow}px 超えており、{edge}が欠けます",
+  "findingFontSize": "算出フォントサイズ {actual}px が下限 {minimum}px を下回っています"
 }

@@ -53,6 +53,7 @@ stateDiagram-v2
     state "P6 構成データ生成" as P6
     state "P7 環境準備" as P7
     state "P8 シーン実装とレンダリング" as P8
+    state "P8I 画面内収まりの検査" as P8I
     state "P9 表示検証" as P9
     state "停止：欠落項目を列挙" as S1
     state "停止：対象範囲の指定を求める" as S2
@@ -79,7 +80,9 @@ stateDiagram-v2
     P6 --> P7 : 尺が下限を満たす
     P7 --> S3 : 日本語グリフが欠落
     P7 --> P8 : 可用
-    P8 --> P9
+    P8 --> P8I : シーン実装が揃う
+    P8I --> P8 : 検査で不適合（I1・I2・I3）
+    P8I --> P9 : 検査を通過しレンダリング
     P9 --> P8 : 差し戻し（判読性・余白・配色）
     P9 --> P6 : 差し戻し（尺の不足）
     P9 --> DONE : R1 から R5 を満たす
